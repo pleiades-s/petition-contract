@@ -1,11 +1,6 @@
 pragma solidity >=0.5.17 <0.7.0;
 pragma experimental ABIEncoderV2;
 
-// Callee
-contract Administrator {
-    function checkValidation(address) public returns(bool) { }
-}
-
 // Caller
 contract Petition{
     // 국민 청원 내용
@@ -14,19 +9,21 @@ contract Petition{
         string content;
         string[] tags;
         uint256 vote;
-        uint256 starttime;
+        uint256 start_time;
         string reply_url;
-        bool isreplied;
+        bool is_replied;
+        string category;
+        bool is_block;
+        string blocked_reason
     }
 
-    Administrator governer;  // did checker
     address owner;  // 청원 관리자
     uint256 id;  // 청원 index
     mapping(bytes32=>bool) votecheck;  // 해당 청원에 vote 했는지 여부 저장
     mapping(uint256=>Contents) petitions;  // 청원 저장
     bool debugmode;
 
-    modifier votechecker(uint256 _id) {  // 사용자가 이미 투표를 했는지 확인
+    modifier voteChecker(uint256 _id) {  // 사용자가 이미 투표를 했는지 확인
         bytes32 addrhash = keccak256(toBytes(msg.sender));
         bytes32 idhash = keccak256(abi.encodePacked(_id));
         bytes32 checkhash = keccak256(abi.encodePacked(addrhash ^ idhash));
@@ -35,31 +32,25 @@ contract Petition{
         _;
     }
 
-    modifier isowner() {  // 청원 관리자 확인
+    modifier isOwner() {  // 청원 관리자 확인
         if(!debugmode){
             require(msg.sender == owner, "he is not owner");
         }
         _;
     }
 
-    modifier getValidation() {  // 한국인 여부 체크, callee의 contract call
-        require(governer.checkValidation(msg.sender), "invalid access");
-        _;
-    }
-
-    constructor(address addr) public{
+    constructor() public{
         owner = msg.sender;
-        governer = Administrator(addr);  // 관리자 contract 등록
         debugmode = true;
         id = 0;
     }
 
 
-    function vote(uint256 _id) public getValidation() votechecker(_id) {  // 투표하기, did&중복투표 체크함
+    function vote(uint256 _id) public voteChecker(_id) {  // 투표하기, did&중복투표 체크함
         petitions[_id].vote += 1;
     }
 
-    function write(string memory title, string memory content, string[] memory tags) public getValidation() {  // 청원 작성
+    function write(string memory title, string memory content, string[] memory tags) public {  // 청원 작성
         petitions[id].title = title;
         petitions[id].content = content;
         for (uint i = 0; i < tags.length; i++){
@@ -113,7 +104,7 @@ contract Petition{
         return id-1;
     }
 
-    function reply(uint256 _id, string memory url) public isowner()  {  // 청원에 답변한 url 달기
+    function reply(uint256 _id, string memory url) public isOwner()  {  // 청원에 답변한 url 달기
         petitions[_id].reply_url = url;
         petitions[_id].isreplied = true;
     }
