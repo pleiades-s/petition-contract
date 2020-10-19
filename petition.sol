@@ -14,7 +14,7 @@ contract Petition{
     bool is_replied;
     string category;
     bool is_block;
-    string blocked_reason
+    string blocked_reason;
   }
 
   struct JuryPanel {
@@ -34,7 +34,7 @@ contract Petition{
   modifier isJuryPanel() {
     emit Alert(msg.sender, functionname);
     require(jury_panels[msg.sender], "msg.sender is not jury pannel");
-    require(jury_panels[msg.sender].dislike > 100, "this jury panel's dislike is over 100");
+    require(jury_panels[msg.sender].dislike > 100, "this jury panel dislike is over 100");
     _;
   }
 
@@ -63,7 +63,6 @@ contract Petition{
 
   function applyJury() {
     require(NUM_JURY < 100, "No vacancy for jury panel");
-    JuryPanel memory jury_panel = Info(true, "");
     jury_panels[msg.sender].dislike = 0;
     jury_panels[msg.sender].like = 0;
   }
