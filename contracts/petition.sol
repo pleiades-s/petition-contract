@@ -34,7 +34,7 @@ contract Petition{
   address[] jury_address;
   bool debugmode;
   uint[] return_indexes;
-  uint256 criteria_vote = 2;
+  uint256 criteria_vote = 100;
 
   modifier isJuryPanel(address _addr) {
     // emit Alert(msg.sender, functionname);
@@ -76,7 +76,7 @@ contract Petition{
   function applyJury() public {
     require(msg.sender != owner, "msg.sender is the government account.");
     require(jury_panels[msg.sender].like == 0, "You are already in jury panel list.");
-    require(NUM_JURY <= criteria_vote, "No vacancy for jury panel");
+    require(NUM_JURY <= 100, "No vacancy for jury panel");
     jury_panels[msg.sender].dislike = 1;
     jury_panels[msg.sender].like = 1;
     jury_panels[msg.sender].addr = msg.sender;
@@ -148,6 +148,7 @@ contract Petition{
       }
     }
   }
+  
 
   function getJuryList() external view returns(JuryPanel[] memory) {  // 판정단 list 불러오기
     JuryPanel[] memory list = new JuryPanel[](NUM_JURY);
@@ -162,7 +163,6 @@ contract Petition{
     }
     return list;
   }
-  
 
   function getAllContents() external view returns(Content[] memory) {  // 청원 list 불러오기
     // 가져올 인덱스 계산하기

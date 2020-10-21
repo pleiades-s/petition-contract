@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const Petiton = artifacts.require("Petition");
 
 // Account
@@ -37,3 +38,14 @@ contract('Petition', () => {
 })
 
 
+=======
+
+
+// 1. 판정단 신청하기
+// 2. 청원글 작성하기
+// 3. 청원 block 하기
+// 4. 청원글 투표하기
+// 5. 청원글 List 보기
+// 6. 판정단 투표하기 / 중복투표 하기
+// 7. 판정단 List 보기
+>>>>>>> 18c42ed45ff91c7568255f5fd7d5c8757710a8be
