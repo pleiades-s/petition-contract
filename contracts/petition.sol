@@ -37,7 +37,7 @@ contract Petition{
   modifier isJuryPanel() {
     // emit Alert(msg.sender, functionname);
     require(jury_panels[msg.sender].like == 0 && jury_panels[msg.sender].dislike == 0, "msg.sender is not a jury pannel.");
-    require(jury_panels[msg.sender].dislike > 100, "This jury panel has over 100 dislikes.");
+    require(jury_panels[msg.sender].dislike > 101, "This jury panel has over 100 dislikes.");
     _;
   }
 
@@ -50,7 +50,7 @@ contract Petition{
     _;
   }
 
-    modifier juryvoteChecker(address jury) {  // 사용자가 이미 투표를 했는지 확인
+    modifier juryVoteChecker(address jury) {  // 사용자가 이미 투표를 했는지 확인
     require(jury_panels[jury].like == 0 && jury_panels[jury].dislike == 0, "The jury does not exist.");
     bytes32 senderhash = keccak256(toBytes(msg.sender));
     bytes32 juryhash = keccak256(toBytes(jury));
@@ -174,11 +174,11 @@ contract Petition{
     return (byteaddr);
   }
 
-  function evaluateJury(address jury, bool isLike) public juryvoteChecker(jury) {
+  function evaluateJury(address jury, bool isLike) public juryVoteChecker(jury) {
     if (isLike) jury_panels[jury].like++;
     else {
       jury_panels[jury].dislike++;
-      if (jury_panels[jury].dislike > 100) {
+      if (jury_panels[jury].dislike > 101) {
         delete jury_panels[jury];
         NUM_JURY--;
 
